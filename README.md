@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a full-stack application for demonstrating secure user authentication and progressive access control. Features are layered across three secret pages, culminating in a social tier that implements relationship-based authorization (401 unauthorized for non-friends). Built with [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app), styled using [Tailwind CSS](https://tailwindcss.com), and utilizing [Supabase](https://supabase.com) (with PostgreSQL) for a complete serverless backend.
 
 ## Getting Started
 
