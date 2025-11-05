@@ -11,12 +11,6 @@ const navLinks = [
 	{ href: '/secret-page-3', label: 'Secret Page 3' },
 ];
 
-// Trash Icon for Delete Account Button
-const TrashIcon = () => (
-	<svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-		<path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.14-2.043-2.219a3.75 3.75 0 00-.77 0c-.868.009-1.57.59-1.898 1.48L8.27 4.97c-.328-.89-.356-1.543-1.898-1.543a3.75 3.75 0 00-.77 0c-1.133.079-2.043 1.039-2.043 2.221v.916m0 0h16.5" />
-	</svg>
-);
 /**
  * Navbar Component: Displays logo, navigation links, and user actions.
  */
@@ -31,16 +25,10 @@ const Navbar = () => {
 		setMessage("Logged out successfully.");
 	};
 
-	const handleDeleteAccount = () => {
-		setUsername(null);
-		setMessage("Account deleted. You are now logged out.");
-		// In a real app, this would trigger an API call to delete the user record.
-	};
-
 	useEffect(() => {
 		// Reset message after a few seconds
 		if (message !== "Navbar ready!") {
-			const timer = setTimeout(() => setMessage("Authentication actions simulated below."), 3000);
+			const timer = setTimeout(() => setMessage("Authentication actions simulated below."), 1);
 			return () => clearTimeout(timer);
 		}
 	}, [message]);
@@ -53,9 +41,9 @@ const Navbar = () => {
 					<div className="flex items-center space-x-8">
 						{/* App Logo */}
 						{/* Using <a> tag as a placeholder for Next.js <Link href="/"> */}
-						<Link href="/secret-page-1" className="flex items-center gap-2">
+						<Link href="/" className="flex items-center gap-2">
 							<SiAwssecretsmanager size={15} />
-							<h1 className="text-2xl font-bold text-indigo-400">Secret App</h1>
+							<h1 className="text-2xl font-bold text-indigo-400">Secret Page App</h1>
 						</Link>
 
 						{/* Navigation Links (Hidden on small screens) */}
@@ -89,15 +77,6 @@ const Navbar = () => {
 									aria-label="Logout"
 								>
 									Logout
-								</button>
-
-								{/* Delete Account Button */}
-								<button
-									onClick={handleDeleteAccount}
-									className="p-1.5 text-red-400 border border-red-400 rounded-full hover:bg-red-900 transition duration-150 transform hover:rotate-3 active:rotate-0"
-									aria-label="Delete Account"
-								>
-									<TrashIcon />
 								</button>
 							</>
 						) : (
