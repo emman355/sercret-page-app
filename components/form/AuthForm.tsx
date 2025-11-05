@@ -60,7 +60,7 @@ const AuthForm = () => {
 
             {/* Header */}
             <h2 className="text-3xl font-extrabold text-center text-gray-900">
-                {isLoginView ? 'Login to Secret App' : 'Create an Account'}
+                {isLoginView ? 'Login to Secret Page App' : 'Create an Account'}
             </h2>
 
             {/* Toggle Button */}
