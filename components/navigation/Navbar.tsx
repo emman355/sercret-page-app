@@ -16,15 +16,9 @@ const navLinks = [
  */
 const Navbar = () => {
 	// 1. Placeholder State for the authenticated user
-	const [username, setUsername] = useState<string | null>("Emmanuel A. Arevalo");
+	const [username] = useState<string | null>("Emmanuel A. Arevalo");
 	const [message, setMessage] = useState("Navbar ready!");
-
-	// 2. Placeholder Handler Functions
-	const handleLogout = () => {
-		setUsername(null);
-		setMessage("Logged out successfully.");
-	};
-
+	
 	useEffect(() => {
 		// Reset message after a few seconds
 		if (message !== "Navbar ready!") {
@@ -34,7 +28,7 @@ const Navbar = () => {
 	}, [message]);
 
 	return (
-		<nav className="bg-gray-800 text-white shadow-lg sticky top-0 z-10 font-sans">
+		<nav className="bg-gray-800 text-white shadow-md shadow-gray-950 top-0 z-10 font-sans sticky w-full">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex justify-between items-center h-16">
 					{/* 1. Logo and Navigation (Left) */}
@@ -69,15 +63,6 @@ const Navbar = () => {
 								<span className="text-sm font-semibold text-indigo-200 hidden sm:block truncate max-w-[120px]">
 									{username}
 								</span>
-
-								{/* Logout Button */}
-								<button
-									onClick={handleLogout}
-									className="px-3 py-1 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition duration-150 shadow-md transform hover:scale-[1.02] active:scale-95"
-									aria-label="Logout"
-								>
-									Logout
-								</button>
 							</>
 						) : (
 							// Loading/Unauthenticated state

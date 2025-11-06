@@ -1,4 +1,4 @@
-import AuthForm from "@/components/form/AuthForm";
+import AuthForm from "@/components/form/auth-form";
 import { SiAwssecretsmanager } from "react-icons/si";
 
 export default function AuthPage() {

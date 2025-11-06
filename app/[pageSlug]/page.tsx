@@ -1,9 +1,12 @@
+import SecretPage1 from '@/modules/secret-page-1';
+import SecretPage2 from '@/modules/secret-page-2';
+import SecretPage3 from '@/modules/secret-page-3';
 import { notFound } from 'next/navigation';
 // Define the interface for the parameters object
 interface SecretPageProps {
   params: {
     // The key must match your dynamic folder name: [pageSlug]
-    pageSlug: string; 
+    pageSlug: string;
   };
 }
 
@@ -14,52 +17,29 @@ const SecretPage = async ({ params }: SecretPageProps) => {
   // 2. Validate the slug to ensure it's one of the expected pages
   const validPages = ['secret-page-1', 'secret-page-2', 'secret-page-3'];
   const slug = pageSlug
-  
+
   if (!validPages.includes(slug)) {
     // Return a 404 page if the URL segment is invalid
-    return notFound(); 
+    return notFound();
   }
 
   // Conditional Rendering based on the slug
   return (
-    <div>
-      <h1>Welcome to the Secret Page: {slug}</h1>
-      
-      {/* --- Conditional Features --- */}
-      
-      {/* Features for all pages (e.g., Logout, Delete Account) */}
-      <section>
-        <p>User Authentication is Active.</p>
-        <button>Sign Out</button>
-        <button>Delete Account</button>
-      </section>
-
+    <div className='space-y-6 w-full'>
       {/* Secret Page 1 & Inherited Features */}
-      { validPages.includes(slug) && (
-        <section>
-          <h2>Secret Message:</h2>
-          <p>This is a secret message visible when logged in.</p>
-        </section>
+      {validPages.includes(slug) && (
+        <SecretPage1 />
       )}
-      
+
       {/* Secret Page 2 & Inherited Features */}
-      { (slug === 'secret-page-2' || slug === 'secret-page-3') && (
-        <section>
-          <h2>Message Editor (Page 2+ Feature)</h2>
-          <textarea placeholder="Add or Overwrite your secret message"></textarea>
-          <button>Save Message</button>
-        </section>
+      {(slug === 'secret-page-2' || slug === 'secret-page-3') && (
+        <SecretPage2 />
       )}
 
       {/* Secret Page 3 & Inherited Features (Social Layer) */}
-      { slug === 'secret-page-3' && (
-        <section>
-          <h2>Social Access (Page 3 Feature)</h2>
-          <p>This is where &quot;Add Friend&quot; and friend message viewing logic resides.</p>
-          <p>Attempting to view non-friend&apos;s message will return a 401.</p>
-        </section>
+      {slug === 'secret-page-3' && (
+        <SecretPage3 />
       )}
-      
     </div>
   );
 }
