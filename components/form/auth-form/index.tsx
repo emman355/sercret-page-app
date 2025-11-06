@@ -39,9 +39,8 @@ const AuthForm = () => {
 
             // In a real app, you would redirect the user here upon success
 
-        } catch (err) {
-            setError("Authentication failed. Please check your credentials.");
-            console.error(err);
+        } catch (err: unknown) {
+            setError(`Authentication failed. Please check your credentials: ${err}` );
         } finally {
             setIsLoading(false);
         }

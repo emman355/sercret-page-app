@@ -1,6 +1,6 @@
 import { isLoggedIn } from "@/constants/constants";
-import AuthPage from "@/modules/AuthPage";
-import HomePage from "@/modules/HomePage";
+import AuthPage from "@/modules/auth-page";
+import HomePage from "@/modules/home-page";
 
 
 export default function Page() {
