@@ -39,9 +39,8 @@ const AuthForm = () => {
 
             // In a real app, you would redirect the user here upon success
 
-        } catch (err) {
-            setError("Authentication failed. Please check your credentials.");
-            console.error(err);
+        } catch (err: unknown) {
+            setError(`Authentication failed. Please check your credentials: ${err}` );
         } finally {
             setIsLoading(false);
         }
@@ -60,7 +59,7 @@ const AuthForm = () => {
 
             {/* Header */}
             <h2 className="text-3xl font-extrabold text-center text-gray-900">
-                {isLoginView ? 'Login to Secret App' : 'Create an Account'}
+                {isLoginView ? 'Login to Secret Page App' : 'Create an Account'}
             </h2>
 
             {/* Toggle Button */}

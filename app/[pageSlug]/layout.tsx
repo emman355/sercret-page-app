@@ -1,15 +1,20 @@
-import Navbar from '@/components/navigation/Navbar';
+import DeleteAccount from '@/components/account-deletion';
+import WrapperContainer from '@/components/wrapper/wrapper-container';
 import React from 'react'
 
-export default function Layout({
+export default function SecretPagesLayout({
     children,
-}: Readonly<{
+}: {
     children: React.ReactNode;
-}>) {
+}) {
     return (
-        <div>
-            <Navbar />
-            {children}
-        </div>
-    )
+        <WrapperContainer>
+            <div className='flex flex-2 w-full'>
+                {children}
+            </div>
+            <div className='flex flex-1'>
+                <DeleteAccount />
+            </div>
+        </WrapperContainer>
+    );
 }
