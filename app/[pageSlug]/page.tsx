@@ -1,3 +1,4 @@
+import { VALID_PAGES } from '@/constants/variables';
 import SecretPage1 from '@/modules/secret-page-1';
 import SecretPage2 from '@/modules/secret-page-2';
 import SecretPage3 from '@/modules/secret-page-3';
@@ -15,10 +16,9 @@ const SecretPage = async ({ params }: SecretPageProps) => {
   const { pageSlug } = await params;
 
   // 2. Validate the slug to ensure it's one of the expected pages
-  const validPages = ['secret-page-1', 'secret-page-2', 'secret-page-3'];
   const slug = pageSlug
 
-  if (!validPages.includes(slug)) {
+  if (!VALID_PAGES.includes(slug)) {
     // Return a 404 page if the URL segment is invalid
     return notFound();
   }
@@ -27,8 +27,8 @@ const SecretPage = async ({ params }: SecretPageProps) => {
   return (
     <div className='space-y-6 w-full'>
       {/* Secret Page 1 & Inherited Features */}
-      {validPages.includes(slug) && (
-        <SecretPage1 />
+      {VALID_PAGES.includes(slug) && (
+        <SecretPage1 params={pageSlug} />
       )}
 
       {/* Secret Page 2 & Inherited Features */}

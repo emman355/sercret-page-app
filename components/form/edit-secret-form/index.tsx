@@ -8,6 +8,7 @@ interface EditSecretFormProps {
     handleCancelEdit: (e: React.FormEvent) => void
     isSaving: boolean
     saveStatus: 'idle' | 'saving' | 'saved' | 'error'
+    placeholder: string
 }
 
 export default function EditSecretForm({
@@ -16,7 +17,8 @@ export default function EditSecretForm({
     handleSaveSecret,
     handleCancelEdit,
     isSaving,
-    saveStatus
+    saveStatus,
+    placeholder
 }: EditSecretFormProps) {
     return (
         <form onSubmit={handleSaveSecret} className='w-full flex flex-col gap-2'>
@@ -28,7 +30,7 @@ export default function EditSecretForm({
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     className="no-scrollbar bg-gray-900 w-full p-4 border border-gray-700 rounded-lg placeholder-gray-400 text-gray-200 resize-none"
-                    placeholder="Type your primary secret message here (This will overwrite the existing one)..."
+                    placeholder={placeholder}
                 />
                 <div className='flex justify-between'>
                     <div className='flex gap-4'>

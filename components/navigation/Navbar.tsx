@@ -1,5 +1,7 @@
 "use client"
 
+import { useSupabaseUser } from "@/hooks/useSupabaseUser";
+import { getUsernameFromEmail } from "@/utils/helpers/formatHelpers";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SiAwssecretsmanager } from "react-icons/si";
@@ -15,10 +17,10 @@ const navLinks = [
  * Navbar Component: Displays logo, navigation links, and user actions.
  */
 const Navbar = () => {
-	// 1. Placeholder State for the authenticated user
-	const [username] = useState<string | null>("Emmanuel A. Arevalo");
 	const [message, setMessage] = useState("Navbar ready!");
-	
+	const { user } = useSupabaseUser();
+	const email = user?.email;
+
 	useEffect(() => {
 		// Reset message after a few seconds
 		if (message !== "Navbar ready!") {
@@ -57,11 +59,11 @@ const Navbar = () => {
 
 					{/* 2. User Info and Actions (Right) */}
 					<div className="flex items-center space-x-4">
-						{username ? (
+						{user && email ? (
 							<>
-								{/* Username Display */}
+								{/* UserName Display */}
 								<span className="text-sm font-semibold text-indigo-200 hidden sm:block truncate max-w-[120px]">
-									{username}
+									{getUsernameFromEmail(email)}
 								</span>
 							</>
 						) : (

@@ -3,6 +3,8 @@
 import Card from "@/components/card";
 import Typography from "@/components/typography";
 import Button from "../button";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 interface CardDetailsProps {
     className?: string,
@@ -12,17 +14,52 @@ const CardDetails = {
     cardTitle: "Account Settings",
     cardDescription: "Manage your ccount settings and data"
 }
-export default function DeleteAccount({className}: CardDetailsProps) {
+export default function DeleteAccount({ className }: CardDetailsProps) {
     const baseClasses = 'flex flex-col justify-between shadow-md shadow-gray-950 max-h-max w-full space-y-6';
     const finalClasses = `${baseClasses} ${className}`;
 
-    const handleDeleteAccount = () => {
-        alert("Account deleted. You are now logged out.");
-        // In a real app, this would trigger an API call to delete the user record.
+    const router = useRouter();
+    const supabase = createClient();
+
+    const handleDeleteAccount = async () => {
+        const confirmed = confirm('Are you sure you want to delete your account? This action is irreversible.');
+        if (!confirmed) return;
+
+        try {
+            const response = await fetch('/api/users', {
+                method: 'DELETE',
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Failed to delete account.');
+            }
+
+            alert('Account deleted successfully.');
+            // Sign out to clear session
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                console.error('Sign out error after deletion:', error.message);
+            }
+            await new Promise(resolve => setTimeout(resolve, 500));
+            router.push('/');
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+            alert(`Error: ${errorMessage}`);
+        }
     };
 
-    const handleLogout = () => {
-        alert("Logged out successfully.");
+    const handleLogout = async () => {
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+            console.error('Logout error:', error.message);
+        } else {
+            alert('User logged out successfully');
+            await new Promise(resolve => setTimeout(resolve, 500));
+            router.push('/');
+        }
     };
 
 
