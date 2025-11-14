@@ -1,0 +1,1 @@
+export const VALID_PAGES = ['secret-page-1', 'secret-page-2', 'secret-page-3'];
