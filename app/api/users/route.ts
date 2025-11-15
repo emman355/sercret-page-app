@@ -58,7 +58,6 @@ export async function POST() {
 
     return NextResponse.json({ success: true, message: 'User added successfully.' });
   } catch (error: unknown) {
-    console.log(error, "error");
     const errorMessage =
       error instanceof Error
         ? error.message

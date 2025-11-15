@@ -38,10 +38,8 @@ export default function DeleteAccount({ className }: CardDetailsProps) {
 
             alert('Account deleted successfully.');
             // Sign out to clear session
-            const { error } = await supabase.auth.signOut();
-            if (error) {
-                console.error('Sign out error after deletion:', error.message);
-            }
+            await supabase.auth.signOut();
+
             await new Promise(resolve => setTimeout(resolve, 500));
             router.push('/');
         } catch (error: unknown) {
@@ -51,17 +49,11 @@ export default function DeleteAccount({ className }: CardDetailsProps) {
     };
 
     const handleLogout = async () => {
-        const { error } = await supabase.auth.signOut();
-
-        if (error) {
-            console.error('Logout error:', error.message);
-        } else {
-            alert('User logged out successfully');
-            await new Promise(resolve => setTimeout(resolve, 500));
-            router.push('/');
-        }
+        await supabase.auth.signOut();
+        alert('User logged out successfully');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        router.push('/');
     };
-
 
     return (
         <Card className={finalClasses}>
