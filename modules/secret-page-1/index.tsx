@@ -19,7 +19,6 @@ export default function SecretPage1({ params }: SecretPage1Props) {
 		messages,
 		messageId,
 		handleEditClick,
-		setNewSecretMessage,
 		handleSaveSecret,
 		handleCancelEdit,
 		isSaving,
@@ -28,7 +27,6 @@ export default function SecretPage1({ params }: SecretPage1Props) {
 	if (loading) return <SkeletonUi />;
 	if (error) return <Typography variant="subtitle" className="text-red-600">Error: {error}</Typography>;
 
-	console.log(params, "params")
 	return (
 		<Card
 			className="bg-gray-800 shadow-gray-950 shadow-md flex flex-col gap-4"
@@ -40,8 +38,7 @@ export default function SecretPage1({ params }: SecretPage1Props) {
 						{messageId === msg.id && !VALID_PAGES[0].includes(params) ? (
 							<EditSecretForm
 								placeholder={msg.content}
-								inputMessage={newSecretMessage}
-								setInputMessage={setNewSecretMessage}
+								defaultMessage={newSecretMessage}
 								handleSaveSecret={handleSaveSecret}
 								handleCancelEdit={handleCancelEdit}
 								isSaving={isSaving}

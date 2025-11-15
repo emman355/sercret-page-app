@@ -1,4 +1,5 @@
 import AuthForm from "@/components/form/auth-form";
+import Typography from "@/components/typography";
 import { SiAwssecretsmanager } from "react-icons/si";
 
 export default function AuthPage() {
@@ -11,20 +12,20 @@ export default function AuthPage() {
               <SiAwssecretsmanager size={100} />
             </div>
             <div className="text-start space-y-4">
-              <h1 className="text-5xl">Secret Page App</h1>
+              <Typography variant="h1" className="text-5xl font-semibold">Secret Page App</Typography>
               <div className="space-y-2">
-                <h1 className="text-2xl">Secure Your Digital World</h1>
-                <p className="font-normal">
+                <Typography variant="subtitle" className="font-semibold">Secure Your Digital World</Typography>
+                <Typography variant="body" className="font-normal">
                   Your private space, simplified.
                   Manage your secret pages and user
                   accounts with the highest level
                   of security and ease of use.
-                </p>
+                </Typography>
               </div>
             </div>
           </div>
         </div>
-        <div className="flex-1 content-center self-center">
+        <div className="flex-1 content-center self-center w-full">
           <AuthForm />
         </div>
       </div>

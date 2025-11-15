@@ -21,12 +21,14 @@ export function FriendRequest({ sender_email, userIcon, requestId }: FriendReque
 
   return (
     <Card className="flex justify-between items-center bg-gray-900 text-white p-4 rounded-xl shadow-lg">
+      {/* Left side: Icon + Username */}
       <div className="flex gap-4 items-center">
         <RenderedIcon className="w-12 h-12 text-cyan-400 bg-gray-950 p-2 rounded-full" />
         <Typography variant="body" className="font-medium text-lg">
           {getUsernameFromEmail(sender_email)}
         </Typography>
       </div>
+      
       <div className="flex gap-3">
         <Button
           onClick={() => handleAcceptRequest(requestId)}
