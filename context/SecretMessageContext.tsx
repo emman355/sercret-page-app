@@ -10,14 +10,15 @@ interface SecretMessageContextType {
   messages: Message[];
   loading: boolean;
   error: string | null;
+  setError: (msg: string | null) => void;
   messageId: string | null;
   newSecretMessage: string;
   saveStatus: 'idle' | 'saving' | 'saved' | 'error';
   addSecretMessage: (content: string) => Promise<void>;
   setNewSecretMessage: (msg: string) => void;
   handleEditClick: (id: string) => void;
-  handleSaveSecret: (e: React.FormEvent) => Promise<void>;
-  handleCancelEdit: (e: React.FormEvent) => void;
+  handleSaveSecret: (message: string) => Promise<void>
+  handleCancelEdit: () => void
   refreshMessages: () => Promise<void>;
   isSaving: boolean;
 }
@@ -52,15 +53,14 @@ export const SecretMessageProvider = ({ children }: { children: ReactNode }) => 
     }
   };
 
-  const handleSaveSecret = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveSecret = async (message: string) => {
     setSaveStatus('saving');
     setError(null);
 
     try {
       const response = await fetch('/api/secret-message', {
         method: 'PUT',
-        body: JSON.stringify({ id: messageId, content: newSecretMessage }),
+        body: JSON.stringify({ id: messageId, content: message }),
       });
 
       const result = await response.json();
@@ -77,12 +77,11 @@ export const SecretMessageProvider = ({ children }: { children: ReactNode }) => 
     }
   };
 
-  const handleCancelEdit = (e: React.FormEvent) => {
-    e.stopPropagation();
+
+  const handleCancelEdit = () => {
     setMessageId(null);
     setNewSecretMessage('');
   };
-
   const refreshMessages = useCallback(
     async () => {
       try {
@@ -96,7 +95,7 @@ export const SecretMessageProvider = ({ children }: { children: ReactNode }) => 
       } finally {
         setLoading(false);
       }
-    },[])
+    }, [])
 
 
   useEffect(() => {
@@ -119,6 +118,7 @@ export const SecretMessageProvider = ({ children }: { children: ReactNode }) => 
         handleCancelEdit,
         refreshMessages,
         isSaving,
+        setError,
       }}
     >
       {children}

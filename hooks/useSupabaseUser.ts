@@ -9,9 +9,6 @@ export const useSupabaseUser = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Auth form state ---
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoginView, setIsLoginView] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,7 +36,7 @@ export const useSupabaseUser = () => {
     fetchUser();
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        fetchUser(); // keep session synced
+        fetchUser();
       } else {
         setUser(null);
       }
@@ -51,18 +48,14 @@ export const useSupabaseUser = () => {
 
   // --- Auth submit (login/register) ---
   const handleAuthSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
+    async ({ email, password }: { email: string; password: string }) => {
       setError(null);
       setIsLoading(true);
 
       try {
         if (isLoginView) {
           const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-          if (error || !data.session) {
-            throw new Error(error?.message || 'Login failed. No session returned.');
-          }
+          if (error || !data.session) throw new Error(error?.message || 'Login failed. No session returned.');
 
           alert('Login successful!');
           await new Promise(resolve => setTimeout(resolve, 500));
@@ -70,17 +63,11 @@ export const useSupabaseUser = () => {
           router.refresh();
         } else {
           const { data: { user }, error: signUpError } = await supabase.auth.signUp({ email, password });
-
-          if (signUpError || !user) {
-            throw new Error(signUpError?.message || 'Sign-up failed. No user returned.');
-          }
+          if (signUpError || !user) throw new Error(signUpError?.message || 'Sign-up failed. No user returned.');
 
           const response = await fetch('/api/users', { method: 'POST' });
           const result = await response.json();
-
-          if (!response.ok || !result.success) {
-            throw new Error(result.message || 'Failed to register account.');
-          }
+          if (!response.ok || !result.success) throw new Error(result.message || 'Failed to register account.');
 
           alert('Account registered successfully!');
           await new Promise(resolve => setTimeout(resolve, 500));
@@ -95,7 +82,7 @@ export const useSupabaseUser = () => {
         setIsLoading(false);
       }
     },
-    [email, password, isLoginView, supabase, router]
+    [isLoginView, supabase, router]
   );
 
   // --- OAuth login ---
@@ -111,10 +98,6 @@ export const useSupabaseUser = () => {
     user,
     loading,
     error,
-    email,
-    setEmail,
-    password,
-    setPassword,
     isLoginView,
     setIsLoginView,
     isLoading,

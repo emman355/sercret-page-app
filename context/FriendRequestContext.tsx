@@ -16,7 +16,7 @@ interface FriendRequestContextProps {
 	sendStatus: SendStatus
 	errorMessage: string
 	handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-	handleSubmit: (e: React.FormEvent) => Promise<void>
+	handleSubmit: (inputValue: string) => Promise<void>
 
 	// accepting friend request
 	acceptStatus: ActionStatus
@@ -54,7 +54,7 @@ export const FriendRequestProvider: React.FC<{ children: React.ReactNode }> = ({
 				setFriendRequests(data.data)
 			}
 		} catch (err) {
-			console.error('Error fetching friend requests:', err)
+			setErrorMessage(`Error fetching friend requests: ${err instanceof Error ? err.message : String(err)}`)
 		} finally {
 			setLoadingRequests(false)
 		}
@@ -70,10 +70,8 @@ export const FriendRequestProvider: React.FC<{ children: React.ReactNode }> = ({
 		setErrorMessage('')
 	}
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault()
-
-		if (!input.trim()) {
+	const handleSubmit = async (inputValue: string): Promise<void> => {
+		if (!inputValue.trim()) {
 			setSendStatus('error')
 			setErrorMessage('Please enter a valid email or username.')
 			return
@@ -82,7 +80,7 @@ export const FriendRequestProvider: React.FC<{ children: React.ReactNode }> = ({
 		setSendStatus('loading')
 
 		try {
-			const { data, error } = await supabase.from('users').select('id').eq('email', input)
+			const { data, error } = await supabase.from('users').select('id').eq('email', inputValue)
 
 			if (error || !data || data.length === 0) {
 				setSendStatus('error')
@@ -106,56 +104,55 @@ export const FriendRequestProvider: React.FC<{ children: React.ReactNode }> = ({
 				setErrorMessage(result.message || 'Failed to send friend request.')
 			}
 		} catch (err) {
-			console.error('Friend request error:', err)
+			setErrorMessage(`Friend request error:  ${err instanceof Error ? err.message : String(err)}`)
 			setSendStatus('error')
-			setErrorMessage('Unexpected error occurred.')
 		}
 	}
 
 	// --- Accepting friend request ---
 	const handleAcceptRequest = async (requestId: string) => {
-		setAcceptStatus('sending')
+		setAcceptStatus('sending');
 		try {
 			const res = await fetch('/api/friends/accept-friend', {
 				method: 'POST',
 				body: JSON.stringify({ requestId }),
-			})
+			});
 
-			const data = await res.json()
+			const data = await res.json();
 
 			if (res.ok && data.success) {
-				setAcceptStatus('sent')
+				setAcceptStatus('sent');
+				await refreshRequests(); // ✅ refresh after accept
 			} else {
-				setAcceptStatus('error')
-				console.error('Failed to accept request:', data.message)
+				setAcceptStatus('error');
 			}
 		} catch (err) {
-			setAcceptStatus('error')
-			console.error('Error accepting request:', err)
+			setAcceptStatus('error');
+			setErrorMessage(`Error accepting request:  ${err instanceof Error ? err.message : String(err)}`);
 		}
-	}
+	};
 
 	// --- Declining friend request ---
 	const handleDeclineRequest = async (requestId: string) => {
-		setDeclineStatus('sending')
+		setDeclineStatus('sending');
 		try {
 			const res = await fetch(`/api/friends/decline-friend/${requestId}`, {
 				method: 'DELETE',
-			})
+			});
 
-			const data = await res.json()
+			const data = await res.json();
 
 			if (res.ok && data.success) {
-				setDeclineStatus('declined')
+				setDeclineStatus('declined');
+				await refreshRequests(); // ✅ refresh after decline
 			} else {
-				setDeclineStatus('error')
-				console.error('Failed to decline request:', data.message)
+				setDeclineStatus('error');
 			}
 		} catch (err) {
-			setDeclineStatus('error')
-			console.error('Error declining request:', err)
+			setDeclineStatus('error');
+			setErrorMessage(`Error declining request: ${err instanceof Error ? err.message : String(err)}`,);
 		}
-	}
+	};
 
 	return (
 		<FriendRequestContext.Provider

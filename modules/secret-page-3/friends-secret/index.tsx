@@ -7,6 +7,9 @@ import UserInitialRound from '@/components/user-initial-round'
 import { getUsernameFromEmail } from '@/utils/helpers/formatHelpers'
 import SkeletonUi from '@/components/skeleton'
 import { Accordion, AccordionItem } from '@heroui/accordion'
+import { GoChevronRight } from "react-icons/go";
+import { GoChevronDown } from "react-icons/go";
+
 
 type FriendSecret = {
     secret_message_id: string
@@ -54,10 +57,9 @@ export default function FriendsSecret({ email, friendId }: FriendProps) {
                 setSecrets(result.data || [])
                 setError(null)
             } catch (err) {
-                console.error('Failed to fetch friends secrets:', err)
                 setError({
                     status: 'error',
-                    message: 'Failed to fetch friend secrets',
+                    message: `Failed to fetch friend secrets: ${err instanceof Error ? err.message : String(err)}`,
                     statusCode: '',
                 })
             } finally {
@@ -105,10 +107,10 @@ export default function FriendsSecret({ email, friendId }: FriendProps) {
                     <Card key={secret.secret_message_id} className="bg-gray-900 border-0 w-full flex flex-col gap-4">
                         <Accordion
                             itemClasses={itemClasses}
-                            className=''
                         >
                             <AccordionItem
                                 key={secret.secret_message_id}
+                                indicator={({ isOpen }) => (isOpen ? <GoChevronDown size={20} /> : <GoChevronRight size={20} />)}
                                 aria-label={secret.secret_message_id}
                                 title={<Typography variant="subtitle">
                                     {getUsernameFromEmail(email)}
@@ -126,10 +128,6 @@ export default function FriendsSecret({ email, friendId }: FriendProps) {
                     </Card>
                 ))
             }
-
-            {!error && !loading && secrets.length === 0 && (
-                <Typography variant="body">No secrets found.</Typography>
-            )}
         </>
     )
 }

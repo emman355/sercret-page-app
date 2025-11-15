@@ -42,8 +42,6 @@ export async function GET() {
         ? JSON.stringify(error)
         : String(error);
 
-    console.error('Fetch error:', errorMessage);
-
     return NextResponse.json(
       {
         success: false,
@@ -115,8 +113,6 @@ export async function POST(req: Request) {
         ? JSON.stringify(error)
         : String(error);
 
-    console.error('Secret message error:', errorMessage);
-
     return NextResponse.json(
       {
         success: false,
@@ -185,8 +181,6 @@ export async function PUT(req: Request) {
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : typeof error === 'object' ? JSON.stringify(error) : String(error);
-
-    console.error('Update error:', errorMessage);
 
     return NextResponse.json(
       {
