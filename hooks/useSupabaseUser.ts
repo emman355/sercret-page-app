@@ -86,13 +86,43 @@ export const useSupabaseUser = () => {
   );
 
   // --- OAuth login ---
-  const handleOAuthLogin = useCallback(
-    (provider: 'google' | 'github') => {
-      alert(`Starting OAuth login with ${provider}...`);
-      supabase.auth.signInWithOAuth({ provider });
-    },
-    [supabase]
-  );
+const handleOAuthLogin = useCallback(
+  async (provider: 'google' | 'github') => {
+    alert(`Starting OAuth login with ${provider}...`);
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+
+    if (error) {
+      setError(`OAuth failed: ${error.message}`);
+      return;
+    }
+
+    // Wait for session after redirect
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        try {
+          const response = await fetch('/api/users', {
+            method: 'POST',
+          });
+          const result = await response.json();
+          if (!response.ok || !result.success) throw new Error(result.message || 'Failed to register account.');
+
+          alert('OAuth login successful!');
+          router.push('/');
+          router.refresh();
+        } catch (err: unknown) {
+          const errorMessage =
+            err instanceof Error ? err.message : typeof err === 'string' ? err : 'Unknown error occurred.';
+          setError(`OAuth registration failed: ${errorMessage}`);
+        }
+      }
+    });
+  },
+  [supabase, router]
+);
 
   return {
     user,
