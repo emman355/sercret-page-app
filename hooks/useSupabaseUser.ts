@@ -32,19 +32,39 @@ export const useSupabaseUser = () => {
     }
   }, [supabase]);
 
-  useEffect(() => {
-    fetchUser();
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        fetchUser();
-      } else {
-        setUser(null);
-      }
-    });
-    return () => {
-      listener.subscription.unsubscribe();
-    };
-  }, [fetchUser, supabase]);
+ 	useEffect(() => {
+  	fetchUser();
+		const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
+			if (session?.user) {
+				setUser(session.user);
+				// 🔑 Add backend registration here
+        if (event === 'SIGNED_IN') {
+          try {
+            const response = await fetch('/api/users', {
+              method: 'POST',
+              body: JSON.stringify({ email: session.user.email, id: session.user.id }),
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+              throw new Error(result.message || 'Failed to register account.');
+            }
+          } catch (err) {
+            setError(
+              'OAuth registration failed: ' +
+                (err instanceof Error ? err.message : String(err))
+            );
+          }
+        }
+			} else {
+				setUser(null);
+			}
+		}
+	);
+
+  return () => {
+    listener.subscription.unsubscribe();
+  };
+}, [fetchUser, supabase]);
 
   // --- Auth submit (login/register) ---
   const handleAuthSubmit = useCallback(
@@ -65,10 +85,6 @@ export const useSupabaseUser = () => {
           const { data: { user }, error: signUpError } = await supabase.auth.signUp({ email, password });
           if (signUpError || !user) throw new Error(signUpError?.message || 'Sign-up failed. No user returned.');
 
-          const response = await fetch('/api/users', { method: 'POST' });
-          const result = await response.json();
-          if (!response.ok || !result.success) throw new Error(result.message || 'Failed to register account.');
-
           alert('Account registered successfully!');
           await new Promise(resolve => setTimeout(resolve, 500));
           router.push('/');
@@ -86,42 +102,13 @@ export const useSupabaseUser = () => {
   );
 
   // --- OAuth login ---
-const handleOAuthLogin = useCallback(
-  async (provider: 'google' | 'github') => {
-    alert(`Starting OAuth login with ${provider}...`);
-
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-    });
-
-    if (error) {
-      setError(`OAuth failed: ${error.message}`);
-      return;
-    }
-
-    // Wait for session after redirect
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        try {
-          const response = await fetch('/api/users', {
-            method: 'POST',
-          });
-          const result = await response.json();
-          if (!response.ok || !result.success) throw new Error(result.message || 'Failed to register account.');
-
-          alert('OAuth login successful!');
-          router.push('/');
-          router.refresh();
-        } catch (err: unknown) {
-          const errorMessage =
-            err instanceof Error ? err.message : typeof err === 'string' ? err : 'Unknown error occurred.';
-          setError(`OAuth registration failed: ${errorMessage}`);
-        }
-      }
-    });
-  },
-  [supabase, router]
-);
+  const handleOAuthLogin = useCallback(
+    (provider: 'google' | 'github') => {
+      alert(`Starting OAuth login with ${provider}...`);
+      supabase.auth.signInWithOAuth({ provider });
+    },
+    [supabase]
+  );
 
   return {
     user,
