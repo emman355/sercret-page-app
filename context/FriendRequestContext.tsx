@@ -73,7 +73,7 @@ export const FriendRequestProvider: React.FC<{ children: React.ReactNode }> = ({
 	const handleSubmit = async (inputValue: string): Promise<void> => {
 		if (!inputValue.trim()) {
 			setSendStatus('error')
-			setErrorMessage('Please enter a valid email or username.')
+			setErrorMessage('Please enter a valid email')
 			return
 		}
 
