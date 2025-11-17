@@ -27,7 +27,7 @@ type FriendProps = {
 type ErrorObject = {
     status: string
     message: string
-    statusCode: string
+    statusCode?: number
 }
 
 export default function FriendsSecret({ email, friendId }: FriendProps) {
@@ -60,7 +60,7 @@ export default function FriendsSecret({ email, friendId }: FriendProps) {
                 setError({
                     status: 'error',
                     message: `Failed to fetch friend secrets: ${err instanceof Error ? err.message : String(err)}`,
-                    statusCode: '',
+                    statusCode: 500,
                 })
             } finally {
                 setLoading(false)
@@ -78,7 +78,7 @@ export default function FriendsSecret({ email, friendId }: FriendProps) {
 
     return (
         <>
-            {error && (
+            {error?.statusCode === 401 && (
                 <Card className="bg-gray-900 border-0 w-full flex flex-col gap-4">
                     <Accordion
                         itemClasses={itemClasses}
@@ -86,6 +86,7 @@ export default function FriendsSecret({ email, friendId }: FriendProps) {
                         <AccordionItem
                             key="error"
                             aria-label="Error"
+                            indicator={({ isOpen }) => (isOpen ? <GoChevronDown size={20} /> : <GoChevronRight size={20} />)}
                             title={<Typography variant="subtitle">
                                 {getUsernameFromEmail(email)}
                             </Typography>}

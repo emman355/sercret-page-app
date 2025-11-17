@@ -99,16 +99,6 @@ export default function SecretPage3() {
 
         {loadingUsers && <SkeletonUi />} {/* ✅ show skeleton while loading */}
 
-        {error && (
-          <p className="text-red-500 text-sm">
-            {error}
-          </p>
-        )} {/* ✅ show error if any */}
-
-        {!loadingUsers && !error && allUsers.length === 0 && (
-          <p className="text-gray-400">No other users found.</p>
-        )}
-
         {!loadingUsers && !error && allUsers.map(
           (user) =>
             user.email && (

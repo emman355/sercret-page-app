@@ -9,31 +9,46 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
 const schema = yup.object().shape({
-  usernameOrEmail: yup
+  email: yup
     .string()
     .trim()
     .required('Please enter a valid email or username')
-    .min(3, 'Must be at least 3 characters'),
+    .email('Must be a valid email address')
+    .matches(
+      /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+      'Must be a valid email address'
+    )
+    .test(
+      'email',
+      'Must be a valid email or at least 3 characters',
+      (value) => {
+        if (!value) return false
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        return emailRegex.test(value) || value.length >= 3
+      }
+    ),
 })
 
 type FormValues = {
-  usernameOrEmail: string
+  email: string
 }
 
 export default function AddFriend() {
-  const { sendStatus, handleSubmit } = useFriendRequest()
+  const { sendStatus, handleSubmit, errorMessage } = useFriendRequest()
 
   const {
     register,
     handleSubmit: rhfHandleSubmit,
     formState: { errors },
     reset,
+    
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
+    mode: 'onChange',
   })
 
   const onSubmit = async (data: FormValues) => {
-    await handleSubmit(data.usernameOrEmail)
+    await handleSubmit(data.email)
     reset()
   }
 
@@ -47,20 +62,20 @@ export default function AddFriend() {
           <label htmlFor="new-friend-username">
             <Typography variant="subtitle">Add Friend</Typography>
           </label>
-          {errors.usernameOrEmail && (
+          {(errors.email || errorMessage )&& (
             <span className="text-red-500 text-sm">
-              {errors.usernameOrEmail.message}
+              {errors.email?.message || errorMessage}
             </span>
           )}
           <input
             id="new-friend-username"
-            {...register('usernameOrEmail')}
+            {...register('email')}
             className="w-full p-2 border text-gray-200 border-gray-700 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-gray-500 focus:border-gray-500"
             placeholder="Please enter email"
             disabled={sendStatus === 'loading'}
           />
         </div>
-        
+
         <Button
           type="submit"
           className="bg-cyan-700 hover:bg-cyan-600 self-end w-full lg:w-xs"
